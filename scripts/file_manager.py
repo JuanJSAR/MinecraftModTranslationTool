@@ -173,12 +173,15 @@ class FileManager():
         Read LANG file.
         """
         data = {}
-        with open(path, 'r') as file:
+        with open(path, 'r', encoding='utf-8-sig') as file:
             lines = file.readlines()
         for line in lines:
             line = line.strip()
-            if line:
-                key, value = line.split('=')
+            if line and not line.startswith('#') and not line.startswith('//')  and not line.startswith('<'):
+                print(line)
+                key_value_pairs = line.split('=')
+                key = key_value_pairs[0].strip()
+                value = '='.join(key_value_pairs[1:]).strip()
                 data[key] = value
         return data
 
@@ -186,7 +189,7 @@ class FileManager():
         """
         Write JSON file.
         """
-        with open(path, 'w') as file:
+        with open(path, 'w', encoding='utf-8') as file:
             json.dump(data, file, indent=4)
 
     def _write_lang_file(self, data, path):
@@ -197,7 +200,7 @@ class FileManager():
         for key, value in data.items():
             text += f'{key}={value}\n'
 
-        with open(path, 'w') as file:
+        with open(path, 'w', encoding='utf-8') as file:
             file.write(text)
 
     def convert_translated_mods(self):
